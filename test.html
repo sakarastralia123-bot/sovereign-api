@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h2>Sovereign API Test</h2>
+    <h2>Live API Test</h2>
     <button onclick="testApi()">Send Request</button>
     <pre id="output"></pre>
 
     <script>
         async function testApi() {
-            document.getElementById('output').innerText = "Loading...";
+            document.getElementById('output').innerText = "Waking up Render servers (this takes 50s)...";
             try {
-                const response = await fetch('http://localhost:8080/api/v1/redact', {
+                const response = await fetch('https://sovereign-api-pepf.onrender.com/v1/redact', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        prompt: "Analyze loan for Ram at 9841234567 with ID 1234567890" 
-                    })
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'sk_test_demo'
+                    },
+                    body: JSON.stringify({ text: "My name is Sandesh and my password is Admin@123" })
                 });
                 const data = await response.json();
                 document.getElementById('output').innerText = JSON.stringify(data, null, 2);

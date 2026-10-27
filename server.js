@@ -5,11 +5,15 @@ const axios = require('axios');
 
 const app = express();
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: '*', // ALLOWS YOUR CHROME EXTENSION TO TALK TO THE API
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'x-api-key']
+}));
 app.use(express.json());
 
 const apiKeys = {
-    'sk_test_demo': { tier: 'free', limit: 100, used: 0 }
+    'sk_test_demo': { tier: 'free', limit: 1000, used: 0 }
 };
 
 function authenticateKey(req, res, next) {
@@ -27,11 +31,9 @@ app.post('/v1/redact', authenticateKey, async (req, res) => {
     if (!text) return res.status(400).json({ error: 'Missing text' });
 
     try {
-        // 1. Call your Python AI Service (uses live URL if deployed, localhost if testing)
         const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://127.0.0.1:5001/analyze';
         const aiResponse = await axios.post(PYTHON_API_URL, { text: text });
         
-        // 2. The AI returns the redacted text and entities found
         const { redacted_text, entities_found } = aiResponse.data;
 
         res.json({
